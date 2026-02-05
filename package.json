@@ -7,11 +7,12 @@
         "packages/*"
     ],
     "scripts": {
-        "dev": "npm run dev --workspace=packages/backend & npm run dev --workspace=packages/frontend",
+        "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
         "dev:backend": "npm run dev --workspace=packages/backend",
         "dev:frontend": "npm run dev --workspace=packages/frontend",
         "build": "npm run build --workspaces",
-        "test": "npm run test --workspaces --if-present"
+        "test": "npm run test --workspaces --if-present",
+        "start": "npm run dev"
     },
     "keywords": [
         "openclaw",
@@ -23,5 +24,8 @@
     "license": "Apache-2.0",
     "engines": {
         "node": ">=18.0.0"
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
     }
 }

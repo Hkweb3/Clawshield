@@ -1,186 +1,63 @@
 # ClawShield 🛡️
 
-> Security & Permissions Layer for OpenClaw Skills
+> **Security & Permissions Layer for AI Agents**
 
-ClawShield helps you safely install and manage OpenClaw skills by scanning for security risks, enforcing permissions policies, and providing a clean UI to monitor all installed skills.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)](https://www.typescriptlang.org/)
+[![Status](https://img.shields.io/badge/Status-Beta-orange)](https://github.com/Hkweb3/Clawshield)
 
-![ClawShield Dashboard](./docs/dashboard.png)
+**ClawShield** is a powerful security layer designed to help you safely install and manage AI agent skills (OpenClaw, MCP, etc.). It bridges the gap between AI autonomy and system safety by providing automated risk scanning, secure sandboxing, and real-time permission auditing.
 
-## Features
+---
 
-- **🔍 Risk Scanner** - Static analysis of skill folders for dangerous patterns (shell execution, network calls, obfuscation, credential access)
-- **🧠 AST Scanner** - JS/TS AST analysis for deeper detection beyond regex
-- **📦 Supply Chain Scan** - Detects risky dependency sources, install scripts, and bundled native binaries
-- **📊 Risk Scoring** - 0-100 risk score with recommendations (Allow, Sandbox, Block)
-- **🔒 Policy Enforcement** - Block shell, secrets, or network access per skill
-- **🧰 Runtime Guard** - Optional Node.js + Python runtime guard with behavioral audit logging
-- **🚀 Preflight Checks** - Scan ClawHub skills before installing
-- **📋 Audit Logging** - Track all scans, installs, and policy changes
+## ✨ Features
 
-## Quick Start
+*   🔍 **Deep AST Scanning**: Automatically detects dangerous code patterns (shell execution, network calls, obfuscation).
+*   🛡️ **Runtime Protection**: Secure guards for **Node.js** and **Python** to block unauthorized actions in real-time.
+*   📊 **Security Dashboard**: A premium UI to monitor skill status, risk scores, and audit logs.
+*   📝 **Audit Logging**: Every sensitive action is logged with high-resolution details.
+*   💼 **Policy Management**: Global and per-workspace security policies.
 
-### Prerequisites
+---
 
-- Node.js 18+
-- npm 9+
+## 🚀 Quick Start
 
-### Installation
+Get ClawShield up and running in seconds.
+
+### 1. Installation
 
 ```bash
-# Clone and install
-cd clawshield
+# Clone the repository
+git clone https://github.com/Hkweb3/Clawshield.git
+cd Clawshield
+
+# Install all dependencies
 npm install
-
-# Start backend (port 3001)
-npm run dev:backend
-
-# Start frontend (port 5173)
-npm run dev:frontend
 ```
 
-Open http://localhost:5173 in your browser.
+### 2. Launching the App
 
-### CLI Usage
+Start both the security backend and the dashboard with a single command:
 
 ```bash
-# Install CLI globally
-npm install -g ./packages/cli
-
-# Preflight scan a ClawHub skill
-clawshield preflight my-awesome-skill
-
-# Install after approval
-clawshield install my-awesome-skill -w ./my-project
-
-# Scan installed skills
-clawshield scan ./my-project/skills
-
-# Run a Node skill with runtime guard
-clawshield run ./my-project/skills/my-skill --entry index.js
-
-# Run a Python skill with runtime guard
-clawshield run ./my-project/skills/my-skill --entry main.py
-
-# Override python binary if needed
-CLAWSHIELD_PYTHON_BIN=python3 clawshield run ./my-project/skills/my-skill --entry main.py
-
-# View config
-clawshield config --show
+npm run dev
 ```
 
-## How It Works
+> [!TIP]
+> This command uses `concurrently` to launch the API (Port 3001) and the UI (Port 5173) in one window.
 
-### Directory Detection
+---
 
-ClawShield scans these locations for skills:
+## 🛠️ Components
 
-| Location | Type | Description |
-|----------|------|-------------|
-| `~/.openclaw/skills` | Managed | Shared skills installed via ClawHub |
-| `<workspace>/skills` | Workspace | Project-specific skills |
+| Component | Description |
+|-----------|-------------|
+| **[CLI](packages/cli)** | Preflight scans, skill installation, and configuration. |
+| **[Backend](packages/backend)** | High-performance Fastify server for discovery and scanning. |
+| **[Frontend](packages/frontend)** | Modern React/Tailwind dashboard for visualization. |
+| **[Shared](packages/shared)** | Unified types and security constants. |
 
-### Risk Scanning
-
-The scanner detects these patterns:
-
-| Pattern | Risk Weight | Examples |
-|---------|-------------|----------|
-| Shell Execution | 25 | `child_process`, `exec()`, `subprocess` |
-| Filesystem Write | 15 | `fs.writeFile`, `open('w')` |
-| Filesystem Delete | 20 | `fs.unlink`, `os.remove()` |
-| Network Calls | 20 | `fetch`, `axios`, `requests`, `curl` |
-| Remote Script Exec | 30 | `curl ... \| bash` |
-| Obfuscation | 25 | `eval()`, `Function()`, base64+exec |
-| Credential Access | 20 | `process.env`, `os.environ` |
-| Dependency Risk | 20 | `git+` deps, install scripts, native binaries |
-
-### Risk Thresholds
-
-| Score | Label | Recommendation |
-|-------|-------|----------------|
-| 0-30 | Safe | Allow |
-| 31-60 | Warning | Allow with sandbox |
-| 61-100 | Danger | Block |
-
-## Configuration
-
-Config stored at `~/.clawshield/config.json`:
-
-```json
-{
-  "workspacePaths": [],
-    "defaultPolicy": {
-      "blockShell": true,
-      "blockSecrets": true,
-      "blockNetwork": false,
-      "blockFsWrite": false,
-      "allowedDirs": [],
-      "allowedDomains": []
-    },
-  "enabledSkills": [],
-  "disabledSkills": []
-}
-```
-
-## Threat Model & Limitations
-
-### What ClawShield Does
-
-- ✅ Static pattern matching for known risky code patterns
-- ✅ AST analysis for JS/TS skills (imports, dangerous calls, env access)
-- ✅ Supply-chain scanning for risky dependency sources and install scripts
-- ✅ Optional Node runtime guard with audit logging
-- ✅ Policy-based blocking of high-risk skills
-- ✅ Audit trail of all security-related actions
-- ✅ Input sanitization for ClawHub slugs
-
-### What ClawShield Does NOT Do
-
-- ❌ **Full sandboxing** - Runtime guard is best-effort and limited to Node/Python
-- ❌ **Dynamic analysis** - We don't execute skill code during scanning
-- ❌ **Obfuscation bypass** - Heavily obfuscated code may evade detection
-- ❌ **Supply chain attacks** - Can't detect compromised dependencies
-
-### Security Best Practices
-
-1. **Only install skills from trusted sources**
-2. **Review skill code before enabling**
-3. **Use the sandbox toggle for moderate-risk skills**
-4. **Keep ClawShield updated**
-5. **Monitor the audit log regularly**
-
-## Project Structure
-
-```
-clawshield/
-├── packages/
-│   ├── backend/       # Fastify API server
-│   │   └── src/
-│   │       ├── services/   # Discovery, scanner, policy, audit
-│   │       └── routes/     # REST API endpoints
-│   ├── frontend/      # React + Vite + Tailwind
-│   │   └── src/
-│   │       ├── pages/      # Dashboard, Skills, Policies, Preflight
-│   │       └── components/ # Layout, shared components
-│   ├── cli/           # Commander.js CLI tool
-│   │   └── src/
-│   │       └── commands/   # preflight, install, scan, config
-│   └── shared/        # Shared types and constants
-```
-
-## API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/dashboard` | GET | Dashboard summary |
-| `/api/skills` | GET | List all skills |
-| `/api/skills/:id/scan` | POST | Rescan a skill |
-| `/api/skills/:id/toggle` | POST | Enable/disable skill |
-| `/api/policies` | GET/POST | Get or update policies |
-| `/api/preflight` | POST | Preflight scan a slug |
-| `/api/install` | POST | Install a skill |
-| `/api/audit` | GET | Get audit log |
-| `/api/sandbox` | GET | Get sandbox config |
+---
 
 ## 🤝 Contributing
 
@@ -193,11 +70,6 @@ ClawShield is released under the [Apache License 2.0](LICENSE).
 ## 🛡️ Security
 
 If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.md).
-
-## 💬 Community
-
-- [GitHub Issues](https://github.com/krishna/clawshield/issues)
-- [OpenClaw Documentation](https://openclaw.org/docs)
 
 ---
 
