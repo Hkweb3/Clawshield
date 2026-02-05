@@ -1,0 +1,31 @@
+{
+    "name": "@clawshield/cli",
+    "version": "1.0.0",
+    "description": "ClawShield CLI tool",
+    "main": "dist/index.js",
+    "bin": {
+        "clawshield": "./dist/index.js"
+    },
+    "scripts": {
+        "dev": "tsx src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "@clawshield/shared": "*",
+        "chalk": "^4.1.2",
+        "commander": "^11.1.0",
+        "gray-matter": "^4.0.3",
+        "glob": "^10.3.10",
+        "inquirer": "^8.2.6",
+        "ora": "^5.4.1"
+    },
+    "devDependencies": {
+        "@types/inquirer": "^8.2.10",
+        "@types/node": "^20.11.5",
+        "vitest": "^1.2.1",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3"
+    }
+}

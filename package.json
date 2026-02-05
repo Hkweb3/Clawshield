@@ -1,0 +1,27 @@
+{
+    "name": "clawshield",
+    "version": "1.0.0",
+    "description": "Security & permissions layer for OpenClaw skills",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "dev": "npm run dev --workspace=packages/backend & npm run dev --workspace=packages/frontend",
+        "dev:backend": "npm run dev --workspace=packages/backend",
+        "dev:frontend": "npm run dev --workspace=packages/frontend",
+        "build": "npm run build --workspaces",
+        "test": "npm run test --workspaces --if-present"
+    },
+    "keywords": [
+        "openclaw",
+        "security",
+        "permissions",
+        "skills"
+    ],
+    "author": "",
+    "license": "Apache-2.0",
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}
